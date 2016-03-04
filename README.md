@@ -1,7 +1,9 @@
 # BringMeTo
-BringMeTo is a simple web application that demonstrates the use of the feather-crest API library
+BringMeTo is a simple web application that demonstrates the use of the
+[feather-crest](https://github.com/Calavoow/feather-crest/tree/contest) API library
 to smoothly interface with the CREST API of EVE Online.
 The API library is fully asynchronous, and models the CREST using static typing.
+This allows the user to interact with the CREST as if it were any other asynchronous (local) resource.
 
 ## Description
 The application consists of a Single-Sign On with an EVE online account,
@@ -24,7 +26,7 @@ Furthermore, the following private CREST endpoints have also been used:
 * systems
 
 Please have a look at the [website source](src/main/scala/eu/calavoow/bringmeto/BringMeToServlet.scala),
-especially the implementation of `/routeItem` where the api library is used most extensively.
+and especially the implementation of `/routeItem` where the api library is used most extensively.
 
 ## Build & Run
 First set download [feather-crest](https://github.com/Calavoow/feather-crest) (refer to that page for more details)
