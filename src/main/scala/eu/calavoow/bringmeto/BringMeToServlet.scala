@@ -7,7 +7,7 @@ import eu.calavoow.bringmeto.api.Login
 import eu.calavoow.bringmeto.config.Config
 import eu.calavoow.bringmeto.universe.Universe
 import feather.crest.api.CrestLink.CrestCommunicationException
-import feather.crest.models.{Character, Root}
+import feather.crest.models._
 import spray.json._
 import feather.crest.api.CrestLink.CrestProtocol._
 import org.scalatra._
@@ -33,15 +33,16 @@ class BringMeToServlet extends BringmetoStack with ApiFormats with FutureSupport
 				val loginLink = ""
 				<html>
 					<head>
-						<title>BringMeTo Homepage</title>
+						<title>BringMeTo</title>
 						<script type="text/javascript" src="js/d3.v3.min.js" charset="utf-8"></script>
 						<script type="text/javascript" src="js/cookie.js"></script>
 						<script type="text/javascript" src="js/home.js"></script>
+						<link rel="stylesheet" href="css/basic.css" />
 					</head>
 					<body>
-						<h1 style="display:none">
-							<a id="login" data-clientid={config.clientId}>Please login</a>
-						</h1>
+						<h1>BringMeTo</h1>
+						Where you want to go!<br />
+						<strong><a id="login" data-clientid={config.clientId}>Please login</a></strong>
 					</body>
 				</html>
 			case Some(token) =>
@@ -51,14 +52,20 @@ class BringMeToServlet extends BringmetoStack with ApiFormats with FutureSupport
 						<script type="text/javascript" src="js/d3.v3.min.js" charset="utf-8"></script>
 						<script type="text/javascript" src="js/cookie.js"></script>
 						<script type="text/javascript" src="js/home.js"></script>
+						<link rel="stylesheet" href="css/basic.css" />
 					</head>
 					<body>
+						<h1>BringMeTo</h1>
+						Where I can buy an item! (E.g. "Sacrilege")
+						Patience please while we fetch information from numerous sources.
 						<form id="itemRouteForm" action="/routeItem">
 							<label for="itemName">Item Name (exact):</label>
 							<input id="itemName" name="itemName" type="text" />
 							<input type="submit" value="Submit" />
 						</form>
 						<div id="output"></div>
+
+						<a id="logout" href="#">Log Out</a>
 					</body>
 				</html>
 		}
@@ -70,6 +77,7 @@ class BringMeToServlet extends BringmetoStack with ApiFormats with FutureSupport
 				<script type="text/javascript" src="js/d3.v3.min.js" charset="utf-8"></script>
 				<script type="text/javascript" src="js/cookie.js"></script>
 				<script type="text/javascript" src="js/login.js"></script>
+				<link rel="stylesheet" href="css/basic.css" />
 			</head>
 			<body>
 				Please wait, processing login information.
@@ -81,8 +89,6 @@ class BringMeToServlet extends BringmetoStack with ApiFormats with FutureSupport
 	 * Expects in the message body only the access code or refresh token to be exchanged for the auth token.
 	 */
 	post("/authCode") {
-		contentType = formats("json")
-
 		val authToken = cookies.get("auth_token")
 		if( authToken.isDefined ) halt(400, "User already has a valid authentication token.")
 
@@ -97,8 +103,6 @@ class BringMeToServlet extends BringmetoStack with ApiFormats with FutureSupport
 	}
 
 	post("/refreshToken") {
-		contentType = formats("json")
-
 		val authToken = cookies.get("access_token")
 		if( authToken.isDefined ) halt(400, "User already has a valid authentication token.")
 
@@ -115,13 +119,11 @@ class BringMeToServlet extends BringmetoStack with ApiFormats with FutureSupport
 
 	def assumeAuth = {
 		val authToken = cookies.get("access_token")
-		if(authToken.isEmpty) halt(400, "User has no access token. Wait a second...")
+		if(authToken.isEmpty) redirect(url(homePage))
 		else authToken
 	}
 
 	get("/routeItem") {
-		contentType = "json"
-
 		val authToken = assumeAuth
 		val itemName : String = params.get("itemName").getOrElse(halt(400, "No item name given"))
 		if(itemName.isEmpty) halt(400, "Item name empty")
@@ -146,7 +148,7 @@ class BringMeToServlet extends BringmetoStack with ApiFormats with FutureSupport
 			// Find nearby regions, that is, within maxJumps.
 			val universe = Universe.graph
 			val closeSystems = universe.nthOrderNeighbours(universe.getSolarSystem(location.id), maxJumps)
-			logger.debug(s"Close systems are: ${closeSystems.mkString("Set(",",",")")}")
+			logger.trace(s"Close systems are: ${closeSystems.mkString("Set(",",",")")}")
 			val closeRegions = closeSystems.map(_._2.regionID)
 
 			// And get the item orders from those regions
@@ -179,7 +181,7 @@ class BringMeToServlet extends BringmetoStack with ApiFormats with FutureSupport
 					<td>{dist}</td>
 					<td>{order.volume}</td>
 					<td>{formatter.format(order.price)}</td>
-					<td><button name="goHere" systemID={s"${solarSystem.solarSystemID}"}>Go</button><button name="waypoint" systemID={s"${solarSystem.solarSystemID}"}>Waypoint</button></td>
+					<td><button class="autopilot" direct="true" systemID={s"${solarSystem.solarSystemID}"}>Go</button><button class="autopilot" direct="false" systemID={s"${solarSystem.solarSystemID}"}>Waypoint</button></td>
 				</tr>
 			}
 
@@ -188,13 +190,17 @@ class BringMeToServlet extends BringmetoStack with ApiFormats with FutureSupport
 					<script type="text/javascript" src="js/d3.v3.min.js" charset="utf-8"></script>
 					<script type="text/javascript" src="js/cookie.js"></script>
 					<script type="text/javascript" src="js/route.js"></script>
+					<link rel="stylesheet" href="css/basic.css" />
 				</head>
 				<body>
-					<h1>Nearby Sellers of {itemName} (within {maxJumps} jumps)</h1>
-					<table>
-						<tr><td>System name</td><td>Security</td><td>Jumps</td><td>Volume</td><td>Price</td><td>Set Autopilot</td></tr>
+					<h1>BringMeTo</h1>
+					Nearby Sellers of {itemName} (within {maxJumps} jumps)
+					<div id="notifications" style="height:2em"></div>
+					<table id="outputTable">
+						<tr><th>System name</th><th>Security</th><th>Jumps</th><th>Volume</th><th>Price</th><th>Set Autopilot</th></tr>
 						{sortedOrders}
 					</table>
+					<a id="logout" href="#">Log Out</a>
 				</body>
 			</html>
 		}
@@ -202,9 +208,30 @@ class BringMeToServlet extends BringmetoStack with ApiFormats with FutureSupport
 	}
 
 
-	post("/autopilot") {
-		val systemID = params.get("systemID").getOrElse(halt(400, "No system ID given"))
-		val direct = params.get("direct").getOrElse(false)
+	get("/autopilot") {
+		val authToken = assumeAuth
+		val systemID = params.get("systemID").getOrElse(halt(400, "No system ID given")).toInt
+		val direct = params.get("direct").map(_.toBoolean).getOrElse(false)
+
+		val universe = Universe.graph
+		val destination = universe.getSolarSystem.getOrElse(systemID, halt(400, "Given solar system ID is not valid."))
+
+		val waypointRequest = async {
+			val root = await(Root.authed())
+			val decode = await(root.decode.follow(authToken))
+			val character = await(decode.character.follow(authToken))
+
+			// Find the crestlink to the solarsystem
+			val solarSystems = await(root.systems.follow(authToken)).items
+			val systemLink = solarSystems.find(_.id == destination.solarSystemID).get
+			val idLink = IdCrestLink[SolarSystem](id = systemLink.id, id_str = systemLink.id_str, href = systemLink.href)
+
+			// Construct the waypoint to send to the CREST endpoint
+			val waypoint = Waypoints(clearOtherWaypoints = direct, first = false, solarSystem = idLink)
+			character.waypoints.post(waypoint, authToken)
+		}
+
+		new AsyncResult() { val is = waypointRequest }
 	}
 
 }

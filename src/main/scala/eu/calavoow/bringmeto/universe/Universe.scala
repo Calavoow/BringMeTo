@@ -21,7 +21,7 @@ case class SolarSystem(
 }
 
 object Universe {
-	def fromFile : Universe = {
+	private def fromFile : Universe = {
 		val solarSystemLines = Source.fromURL(getClass.getResource("/mapSolarSystems.csv")).getLines()
 		val solarSystems = solarSystemLines.drop(1).map(_.split(",")).map { array =>
 			SolarSystem(array(0).toInt, array(1).toInt, array(2), array(3).toDouble)
@@ -46,7 +46,7 @@ object Universe {
 		Universe(adjacencyList)
 	}
 
-	def locationsFromFile(universe : Universe) : Map[Int,SolarSystem] = {
+	private def locationsFromFile(universe : Universe) : Map[Int,SolarSystem] = {
 		val locationLines = Source.fromURL(getClass.getResource("/locationToSolarSystem.csv")).getLines()
 		val locationsToSolarSystems = locationLines.drop(1).map(_.split(",")).map { array =>
 			val locationID = array(0).toInt

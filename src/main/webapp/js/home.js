@@ -45,6 +45,13 @@ window.onload = function() {
 		login.parentNode.setAttribute("style","");
 	}
 
+	d3.select("#logout").on("click", function() {
+		docCookies.removeItem("access_token");
+		docCookies.removeItem("refresh_token");
+		docCookies.removeItem("token_type")
+		window.location.reload();
+	})
+
 	// Generate RFC4122 v4 UUID
 	function uuidGen() {
 		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
