@@ -3,7 +3,6 @@
 window.onload = function() {
 	var access_token = docCookies.getItem("access_token");
 	var refresh_token = docCookies.getItem("refresh_token");
-	var client_id = document.getElementById("login").dataset.clientid;
 
 	if(access_token) {
 //		window.location.replace("/route");
@@ -27,8 +26,10 @@ window.onload = function() {
 						alert('Unexpected data received.')
 					}
 				}
+				window.location.reload();
 		});
 	} else {
+		var client_id = document.getElementById("login").dataset.clientid;
 		var login_page = "https://login.eveonline.com/oauth/authorize/"
 		var csrf_token = uuidGen();
 		sessionStorage.setItem('csrf_token', csrf_token);
@@ -43,7 +44,6 @@ window.onload = function() {
 		login.setAttribute("href", total_href);
 		login.parentNode.setAttribute("style","");
 	}
-
 
 	// Generate RFC4122 v4 UUID
 	function uuidGen() {

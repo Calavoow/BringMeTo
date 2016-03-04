@@ -34,6 +34,7 @@ object BringmetoBuild extends Build {
 				"com.typesafe" % "config" % "1.2.1",
 				"io.spray" %% "spray-json" % "1.3.2",
 				"net.databinder.dispatch" %% "dispatch-core" % "0.11.3",
+				"org.scala-lang.modules" %% "scala-async" % "0.9.5",
 				"eu.calavoow" %% "feather-crest" % "0.2"
 			),
 			scalateTemplateConfig in Compile <<= (sourceDirectory in Compile){ base =>
