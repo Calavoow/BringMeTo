@@ -27,15 +27,17 @@ Please have a look at the [website source](src/main/scala/eu/calavoow/bringmeto/
 especially the implementation of `/routeItem` where the api library is used most extensively.
 
 ## Build & Run
-First set up [feather-crest](https://github.com/Calavoow/feather-crest) (refer to that page for more details)
+First set download [feather-crest](https://github.com/Calavoow/feather-crest) (refer to that page for more details)
 and run
 
 ```sh
-sbt
-publishLocal
+$ cd feather-crest
+$ sbt
+> publishLocal
 ```
 
 to set up the library dependency locally.
+Then the server can be started with
 
 ```sh
 $ cd BringMeTo

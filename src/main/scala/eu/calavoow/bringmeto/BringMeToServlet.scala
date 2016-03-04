@@ -57,13 +57,13 @@ class BringMeToServlet extends BringmetoStack with ApiFormats with FutureSupport
 					<body>
 						<h1>BringMeTo</h1>
 						Where I can buy an item! (E.g. "Sacrilege")
-						Patience please while we fetch information from numerous sources.
 						<form id="itemRouteForm" action="/routeItem">
 							<label for="itemName">Item Name (exact):</label>
 							<input id="itemName" name="itemName" type="text" />
 							<input type="submit" value="Submit" />
 						</form>
 						<div id="output"></div>
+						Please be patient after submitting while we fetch information from numerous sources.
 
 						<a id="logout" href="#">Log Out</a>
 					</body>
