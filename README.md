@@ -9,7 +9,7 @@ This allows the user to interact with the CREST as if it were any other asynchro
 The application consists of a Single-Sign On with an EVE online account,
 followed by the option to input an item to search for.
 BringMeTo will then attempt to find stations within 10 jumps of the user
-that sell that item.
+that sell that item, even across region boundaries!
 Finally, it presents the user the option to set a waypoint to any of the items.
 This is achieved with the use of the following public CREST endpoints:
 
